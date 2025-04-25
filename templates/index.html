@@ -1,0 +1,25 @@
+<!-- Inside the <body> tag, before the main container -->
+    <div style="position: absolute; top: 15px; right: 20px; font-size: 0.9em;">
+        {% if username %}
+            Welcome, <strong>{{ username }}</strong>! | <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('auth') }}">Login / Register</a>
+        {% endif %}
+    </div>
+    
+    <!-- Modify the existing form tag -->
+    <form method="POST" action="/"> <!-- Keep submitting to '/' -->
+        <label for="skills">
+            {% if username %} <!-- Personalize the label if logged in -->
+                {{ username }}, pop your amazing skills below! 👇
+            {% else %}
+                Pop your amazing skills in the box below! 👇
+            {% endif %}
+        </label>
+        <input type="text" class="skills-input" id="skills" name="skills" placeholder="e.g., Python, Drawing, Teamwork" required>
+        <button type="submit" class="submit-button">
+            <i class="fas fa-search"></i> Find Jobs!
+        </button>
+    </form>
+    
+    <!-- Rest of the index.html (results area) remains the same -->
