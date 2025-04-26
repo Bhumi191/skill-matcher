@@ -121,7 +121,8 @@ def generate_roadmap(missing_skills):
     )
     return response['choices'][0]['message']['content']
 
-import requests
+
+
 
 def suggest_courses(skills):
     query = "+".join(skills)
@@ -152,8 +153,14 @@ def dashboard():
         return redirect(url_for('login'))
     data = SavedData.query.filter_by(username=session['user']).all()
     return render_template('dashboard.html', data=data)
+@app.route('/ping')
+def ping():
+    return "Ping received"
+
+
 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True)
+

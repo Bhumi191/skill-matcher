@@ -1,0 +1,34 @@
+<!-- templates/register.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Register | Skill Matcher</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="animated-bg">
+
+  <div class="register-box">
+    <h2 class="neon-glow">🌟 Create Your Skill Matcher Account</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flashes">
+          {% for category, message in messages %}
+            <div class="flash {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="/register" class="animated-form">
+      <input type="text" name="username" placeholder="👤 Choose Username" required>
+      <input type="password" name="password" placeholder="🔒 Choose Password" required>
+      <button type="submit" class="glow-btn">Register 🚀</button>
+    </form>
+
+    <p class="login-text">Already have an account? <a href="/login">Login here 🚪</a></p>
+  </div>
+
+</body>
+</html>
