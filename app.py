@@ -14,18 +14,23 @@ db = SQLAlchemy(app)
 
 openai.api_key = "YOUR_OPENAI_API_KEY"
 
-# User model (MISSING in original)
+# User model
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), unique=True)
-    password = db.Column(db.String(200))
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(100), nullable=False)
+    profession = db.Column(db.String(100))
+    age = db.Column(db.Integer)
+    country = db.Column(db.String(100))
 
+# SavedData model
 class SavedData(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100))  # foreign key reference
+    username = db.Column(db.String(50), nullable=False)
     matched_jobs = db.Column(db.Text)
     roadmap_text = db.Column(db.Text)
-    roadmap_img = db.Column(db.String(300))
+    roadmap_img = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
 @app.route('/')
 def home():
@@ -38,13 +43,20 @@ def register():
     if request.method == 'POST':
         user = request.form['username']
         pwd = generate_password_hash(request.form['password'])
+        profession = request.form['profession']
+        age = request.form['age']
+        country = request.form['country']
+
         if User.query.filter_by(username=user).first():
-            flash("User already exists")
+            flash("User already exists", "error")
             return redirect(url_for('register'))
-        db.session.add(User(username=user, password=pwd))
+
+        new_user = User(username=user, password=pwd, profession=profession, age=age, country=country)
+        db.session.add(new_user)
         db.session.commit()
-        flash("Registered!")
+        flash("Registered Successfully! 🎉", "success")
         return redirect(url_for('login'))
+    
     return render_template('register.html')
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -56,13 +68,21 @@ def login():
         if found and check_password_hash(found.password, pwd):
             session['user'] = user
             return redirect(url_for('home'))
-        flash("Invalid creds!")
+        flash("Invalid credentials!", "error")
     return render_template('login.html')
 
 @app.route('/logout')
 def logout():
     session.pop('user', None)
     return redirect(url_for('login'))
+
+@app.route('/dashboard')
+def dashboard():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    user = User.query.filter_by(username=session['user']).first()
+    data = SavedData.query.filter_by(username=session['user']).all()
+    return render_template('dashboard.html', user=user, data=data)
 
 @app.route('/match', methods=['POST'])
 def match():
@@ -76,7 +96,7 @@ def match():
             matched.append(row['job_title'])
 
     if matched:
-        # Save to DB
+        # Save matched jobs
         saved = SavedData(
             username=session['user'],
             matched_jobs=",".join(matched),
@@ -87,7 +107,7 @@ def match():
         db.session.commit()
         return render_template('result.html', jobs=matched)
     else:
-        # If no jobs matched → get missing skills
+        # No match found → create roadmap
         missing = set()
         for _, row in jobs.iterrows():
             required = row['required_skills'].lower().split(',')
@@ -97,7 +117,7 @@ def match():
         courses = suggest_courses(missing)
         roadmap_img = generate_flowchart_from_skills(missing)
 
-        # Save to DB
+        # Save roadmap
         saved = SavedData(
             username=session['user'],
             matched_jobs="",
@@ -121,9 +141,6 @@ def generate_roadmap(missing_skills):
     )
     return response['choices'][0]['message']['content']
 
-
-
-
 def suggest_courses(skills):
     query = "+".join(skills)
     youtube = f"https://www.youtube.com/results?search_query={query}+course"
@@ -143,24 +160,18 @@ def generate_flowchart_from_skills(skills):
             dot.edge(previous, node_id)
         previous = node_id
 
-    path = f"static/roadmaps/roadmap_{uuid.uuid4().hex}.png"
+    # Save to static folder
+    filename = f"roadmap_{uuid.uuid4().hex}.png"
+    path = os.path.join('static', 'roadmaps', filename)
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     dot.render(path, format='png', cleanup=True)
     return "/" + path
 
-@app.route('/dashboard')
-def dashboard():
-    if 'user' not in session:
-        return redirect(url_for('login'))
-    data = SavedData.query.filter_by(username=session['user']).all()
-    return render_template('dashboard.html', data=data)
 @app.route('/ping')
 def ping():
     return "Ping received"
-
-
 
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
     app.run(debug=True)
-

@@ -1,0 +1,151 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron&display=swap');
+
+/* Full animated background */
+body.animated-bg {
+  background: linear-gradient(120deg, #000000, #0f0f0f, #1a1a1a);
+  background-size: 300% 300%;
+  animation: moveBG 10s ease infinite;
+  font-family: 'Orbitron', sans-serif;
+  color: white;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+@keyframes moveBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Login box styling */
+.login-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid #00ffff66;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 0 30px #00ffff33;
+  text-align: center;
+  animation: fadeIn 1.5s ease;
+}
+
+/* Neon heading */
+.neon-glow {
+  color: #00ffff;
+  font-size: 24px;
+  text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff;
+  margin-bottom: 20px;
+  animation: flicker 2s infinite alternate;
+}
+
+/* Flicker animation */
+@keyframes flicker {
+  0% { opacity: 0.8; text-shadow: 0 0 5px #00ffff; }
+  100% { opacity: 1; text-shadow: 0 0 20px #00ffff; }
+}
+
+/* Inputs */
+input {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin: 12px 0;
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 0 10px #00ffff33;
+  transition: 0.3s;
+}
+
+input:focus {
+  box-shadow: 0 0 15px #00ffff;
+  outline: none;
+}
+
+/* Glowing login button */
+.glow-btn {
+  background-color: #00ffff;
+  color: black;
+  padding: 12px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff88;
+  transition: all 0.3s ease;
+}
+
+.glow-btn:hover {
+  transform: scale(1.05);
+  background-color: #00e6e6;
+  box-shadow: 0 0 30px #00ffff;
+}
+
+/* Link hover */
+a {
+  color: #00ffff;
+  text-decoration: none;
+}
+
+a:hover {
+  text-shadow: 0 0 10px #00ffff;
+}
+
+/* Flash messages */
+.flashes {
+  margin: 10px 0;
+}
+.flash {
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+.flash.error {
+  background-color: #ff4c4c;
+  color: #fff;
+}
+.flash.success {
+  background-color: #00ff99;
+  color: #000;
+}
+
+/* Fade in on load */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.skill-box {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid #00ffff88;
+    border-radius: 20px;
+    padding: 50px;
+    text-align: center;
+    box-shadow: 0 0 30px #00ffff99;
+    animation: popUp 1s ease;
+    width: 400px;
+  }
+  
+  /* Popup animation */
+  @keyframes popUp {
+    0% { transform: scale(0.7); opacity: 0; }
+    60% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); }
+  }
+  
+  /* Dashboard link and Logout link */
+  .dashboard-link, .logout-link {
+    margin-top: 20px;
+  }
+  
+  .dashboard-link a, .logout-link a {
+    color: #00ffff;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .dashboard-link a:hover, .logout-link a:hover {
+    text-shadow: 0 0 10px #00ffff;
+  }
+  
