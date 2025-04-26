@@ -170,7 +170,6 @@ def generate_flowchart_from_skills(skills):
 @app.route('/ping')
 def ping():
     return "Ping received"
-
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()

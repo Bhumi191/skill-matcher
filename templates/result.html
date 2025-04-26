@@ -1,30 +1,52 @@
 <!DOCTYPE html>
-<html>
-<head><link rel="stylesheet" href="/static/style.css"></head>
-<body>
-    {% if jobs %}
-        <h3>Matched Jobs:</h3>
-        <ul>{% for job in jobs %}<li>{{ job }}</li>{% endfor %}</ul>
-    {% elif roadmap %}
-        <h3>No jobs matched. Here's a roadmap:</h3>
-        <pre>{{ roadmap }}</pre>
-    {% endif %}
-    <a href="/">Back</a>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Result | Skill Matcher</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="animated-bg">
+
+<div class="result-box">
+  <h2 class="neon-glow">🔍 Your Results</h2>
+
+  {% if jobs %}
+    <h3>🎯 Jobs Matched for You:</h3>
+    <ul>
+      {% for job in jobs %}
+        <li>{{ job }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if roadmap %}
+    <h3>🛤️ Roadmap to Bridge Your Skill Gap:</h3>
+    <div style="text-align: left; white-space: pre-wrap; background: #111; padding: 10px; border-radius: 8px;">
+      {{ roadmap|safe }}
+    </div>
+  {% endif %}
+
+  {% if courses %}
+    <h3>🎓 Courses to Learn:</h3>
+    <ul>
+      {% for name, link in courses.items() %}
+        <li><a href="{{ link }}" target="_blank">{{ name }}</a></li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if roadmap_img %}
+    <h3>🗺️ Pictorial Roadmap:</h3>
+    <img src="{{ roadmap_img }}" style="max-width: 90%; border: 2px solid #00ffff; border-radius: 10px; margin-top: 10px;">
+  {% endif %}
+
+  <p style="margin-top: 20px;">
+    <a href="/">🔙 Go Back to Home</a> |
+    <a href="/dashboard">📂 Go to Dashboard</a> |
+    <a href="/logout">🚪 Logout</a>
+  </p>
+
+</div>
+
 </body>
 </html>
-{% if roadmap %}
-    <h3>Roadmap to Bridge Your Skill Gap 🧠</h3>
-    <div style="text-align: left; white-space: pre-wrap;">{{ roadmap|safe }}</div>
-{% endif %}
-{% if courses %}
-    <h3>Start Learning Now 🚀</h3>
-    <ul>
-        {% for name, link in courses.items() %}
-            <li><a href="{{ link }}" target="_blank">{{ name }}</a></li>
-        {% endfor %}
-    </ul>
-{% endif %}
-{% if roadmap_img %}
-    <h3>Pictorial Roadmap 🗺️</h3>
-    <img src="{{ roadmap_img }}" style="max-width: 90%; border: 1px solid #fff; border-radius: 8px;">
-{% endif %}
