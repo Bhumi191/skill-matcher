@@ -1,4 +1,3 @@
-<!-- templates/register.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,27 +7,30 @@
 </head>
 <body class="animated-bg">
 
-  <div class="register-box">
-    <h2 class="neon-glow">🌟 Create Your Skill Matcher Account</h2>
+<div class="login-box">
+  <h2 class="neon-glow">🌟 Create Your Account</h2>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="flashes">
-          {% for category, message in messages %}
-            <div class="flash {{ category }}">{{ message }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flashes">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
 
-    <form method="POST" action="/register" class="animated-form">
-      <input type="text" name="username" placeholder="👤 Choose Username" required>
-      <input type="password" name="password" placeholder="🔒 Choose Password" required>
-      <button type="submit" class="glow-btn">Register 🚀</button>
-    </form>
+  <form method="POST" action="/register">
+    <input type="text" name="username" placeholder="👤 Username" required>
+    <input type="password" name="password" placeholder="🔒 Password" required>
+    <input type="text" name="profession" placeholder="💼 Profession" required>
+    <input type="number" name="age" placeholder="🎂 Age" required>
+    <input type="text" name="country" placeholder="🌍 Country" required>
+    <button type="submit" class="glow-btn">Register 🚀</button>
+</form>
 
-    <p class="login-text">Already have an account? <a href="/login">Login here 🚪</a></p>
-  </div>
+  <p class="register-text">Already have an account? <a href="/login">Login here</a></p>
+</div>
 
 </body>
 </html>

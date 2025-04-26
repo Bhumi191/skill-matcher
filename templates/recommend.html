@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Recommendations</title>
+</head>
+<body>
+    <h1>Matched Jobs</h1>
+    {% if jobs %}
+        <ul>
+        {% for job in jobs %}
+            <li><a href="{{ job['url'] }}" target="_blank">{{ job['title'] }}</a> - {{ job['company'] }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No jobs found 😔</p>
+    {% endif %}
+
+    <h1>Recommended Courses</h1>
+    <ul>
+        <li><a href="{{ courses['YouTube'] }}" target="_blank">YouTube Courses</a></li>
+        <li><a href="{{ courses['Coursera'] }}" target="_blank">Coursera Courses</a></li>
+        <li><a href="{{ courses['Udemy'] }}" target="_blank">Udemy Courses</a></li>
+    </ul>
+
+    <h1>Learning Roadmap</h1>
+    <pre>{{ roadmap }}</pre>
+
+    <h1>Learning Flowchart</h1>
+    <img src="{{ flowchart }}" alt="Learning Flowchart" style="width: 80%;">
+
+</body>
+</html>

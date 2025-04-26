@@ -1,25 +1,264 @@
-<!-- Inside the <body> tag, before the main container -->
-    <div style="position: absolute; top: 15px; right: 20px; font-size: 0.9em;">
-        {% if username %}
-            Welcome, <strong>{{ username }}</strong>! | <a href="{{ url_for('logout') }}">Logout</a>
-        {% else %}
-            <a href="{{ url_for('auth') }}">Login / Register</a>
-        {% endif %}
-    </div>
-    
-    <!-- Modify the existing form tag -->
-    <form method="POST" action="/"> <!-- Keep submitting to '/' -->
-        <label for="skills">
-            {% if username %} <!-- Personalize the label if logged in -->
-                {{ username }}, pop your amazing skills below! 👇
-            {% else %}
-                Pop your amazing skills in the box below! 👇
-            {% endif %}
-        </label>
-        <input type="text" class="skills-input" id="skills" name="skills" placeholder="e.g., Python, Drawing, Teamwork" required>
-        <button type="submit" class="submit-button">
-            <i class="fas fa-search"></i> Find Jobs!
-        </button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Matcher</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding-top: 40px;
+        }
+
+        h1 {
+            color: #00FFC6;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+            text-shadow: 0 0 10px #00FFC6;
+        }
+
+        form {
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 255, 198, 0.2);
+            width: 90%;
+            max-width: 500px;
+            margin-bottom: 30px;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: block;
+            font-size: 1.1rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            margin-bottom: 20px;
+            border: none;
+            border-radius: 8px;
+            background-color: #2c2c2c;
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #00FFC6;
+            color: #121212;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #00cc99;
+        }
+
+        #results {
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 255, 198, 0.2);
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .job {
+            background-color: #2c2c2c;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+
+        .job:hover {
+            transform: scale(1.02);
+            background-color: #333;
+        }
+
+        .job-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #00FFC6;
+            margin-bottom: 8px;
+        }
+
+        .job-company, .job-location, .job-description {
+            font-size: 1rem;
+            margin-bottom: 5px;
+            color: #bbb;
+        }
+
+        a {
+            color: #00FFC6;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .roadmap, .courses {
+            margin-top: 30px;
+        }
+
+        .course {
+            background-color: #2c2c2c;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            transition: transform 0.2s;
+        }
+
+        .course:hover {
+            transform: scale(1.02);
+            background-color: #333;
+        }
+
+        .course-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #00FFC6;
+        }
+
+        .course-link {
+            margin-top: 10px;
+            display: block;
+            color: #00FFC6;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Skill Matcher</h1>
+
+    <form id="skillsForm">
+        <label for="skills">Enter your skills:</label>
+        <input type="text" id="skills" name="skills" placeholder="e.g., Python, Django, JavaScript">
+        <button type="submit">Find Matching Jobs</button>
     </form>
-    
-    <!-- Rest of the index.html (results area) remains the same -->
+
+    <div id="results"></div>
+
+    <script>
+        document.getElementById('skillsForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const skills = document.getElementById('skills').value;
+
+            fetch('/match', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ skills: skills })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = ''; // Clear previous results
+
+                // Display job recommendations
+                if (data.jobs && data.jobs.length > 0) {
+                    data.jobs.forEach(job => {
+                        const jobDiv = document.createElement('div');
+                        jobDiv.classList.add('job');
+
+                        const title = document.createElement('div');
+                        title.classList.add('job-title');
+                        title.textContent = job.title || 'Unknown Job Title';
+
+                        const company = document.createElement('div');
+                        company.classList.add('job-company');
+                        company.textContent = `Company: ${job.company || 'Unknown'}`;
+
+                        const location = document.createElement('div');
+                        location.classList.add('job-location');
+                        location.textContent = `Location: ${job.location || 'Unknown'}`;
+
+                        const description = document.createElement('div');
+                        description.classList.add('job-description');
+                        description.textContent = job.description ? job.description.slice(0, 150) + '...' : 'No description available';
+
+                        const link = document.createElement('a');
+                        link.href = job.url;
+                        link.target = "_blank";
+                        link.textContent = "View Job";
+                        link.style.display = "block";
+                        link.style.marginTop = "10px";
+
+                        jobDiv.appendChild(title);
+                        jobDiv.appendChild(company);
+                        jobDiv.appendChild(location);
+                        jobDiv.appendChild(description);
+                        jobDiv.appendChild(link);
+
+                        resultsDiv.appendChild(jobDiv);
+                    });
+                } else {
+                    resultsDiv.innerHTML = '<p>No matching jobs found. Try different skills!</p>';
+                }
+
+                // Display roadmap if available
+                if (data.roadmap) {
+                    const roadmapDiv = document.createElement('div');
+                    roadmapDiv.classList.add('roadmap');
+                    roadmapDiv.innerHTML = `<h2>Your Learning Roadmap</h2><p>${data.roadmap}</p><img src="${data.roadmap_image}" alt="Roadmap Image">`;
+                    resultsDiv.appendChild(roadmapDiv);
+                }
+
+                // Display course recommendations if available
+                if (data.courses) {
+                    const coursesDiv = document.createElement('div');
+                    coursesDiv.classList.add('courses');
+                    coursesDiv.innerHTML = '<h2>Recommended Courses</h2>';
+
+                    data.courses.forEach(course => {
+                        const courseDiv = document.createElement('div');
+                        courseDiv.classList.add('course');
+
+                        const courseTitle = document.createElement('div');
+                        courseTitle.classList.add('course-title');
+                        courseTitle.textContent = course.title;
+
+                        const courseLink = document.createElement('a');
+                        courseLink.href = course.link;
+                        courseLink.target = "_blank";
+                        courseLink.classList.add('course-link');
+                        courseLink.textContent = "View Course";
+
+                        courseDiv.appendChild(courseTitle);
+                        courseDiv.appendChild(courseLink);
+                        coursesDiv.appendChild(courseDiv);
+                    });
+
+                    resultsDiv.appendChild(coursesDiv);
+                }
+
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('results').innerHTML = '<p>Something went wrong. Please try again later.</p>';
+            });
+        });
+    </script>
+</body>
+</html>
